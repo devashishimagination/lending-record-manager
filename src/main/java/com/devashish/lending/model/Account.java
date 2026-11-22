@@ -1,17 +1,10 @@
 package com.devashish.lending.model;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Entity
 public class Account {
@@ -35,11 +28,33 @@ public class Account {
     @NotNull
     private LocalDate startDate;
 
-    private LocalDate dueDate;
+    private LocalDate dueDate;                    // optional
 
     private boolean interestEnabled;
-    private BigDecimal monthlyRatePercent;
-    public Long getId() {
+    private BigDecimal monthlyRatePercent;        // percent per period (month or day)
+
+    @Enumerated(EnumType.STRING)
+    private InterestMode interestMode;
+
+    private int graceMonths;
+
+    @Enumerated(EnumType.STRING)
+    private LateMode lateMode;
+
+    private BigDecimal lateRatePercent;
+
+    @Enumerated(EnumType.STRING)
+    private InterestPlan interestPlan = InterestPlan.DECIDE_LATER;
+
+    @Enumerated(EnumType.STRING)
+    private AccountStatus status = AccountStatus.OPEN;
+
+    private String guarantorName;                 // optional
+    private String notes;
+
+    public Account() { }
+
+	public Long getId() {
 		return id;
 	}
 
@@ -103,12 +118,52 @@ public class Account {
 		this.monthlyRatePercent = monthlyRatePercent;
 	}
 
+	public InterestMode getInterestMode() {
+		return interestMode;
+	}
+
+	public void setInterestMode(InterestMode interestMode) {
+		this.interestMode = interestMode;
+	}
+
 	public int getGraceMonths() {
 		return graceMonths;
 	}
 
 	public void setGraceMonths(int graceMonths) {
 		this.graceMonths = graceMonths;
+	}
+
+	public LateMode getLateMode() {
+		return lateMode;
+	}
+
+	public void setLateMode(LateMode lateMode) {
+		this.lateMode = lateMode;
+	}
+
+	public BigDecimal getLateRatePercent() {
+		return lateRatePercent;
+	}
+
+	public void setLateRatePercent(BigDecimal lateRatePercent) {
+		this.lateRatePercent = lateRatePercent;
+	}
+
+	public InterestPlan getInterestPlan() {
+		return interestPlan;
+	}
+
+	public void setInterestPlan(InterestPlan interestPlan) {
+		this.interestPlan = interestPlan;
+	}
+
+	public AccountStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(AccountStatus status) {
+		this.status = status;
 	}
 
 	public String getGuarantorName() {
@@ -127,12 +182,5 @@ public class Account {
 		this.notes = notes;
 	}
 
-	private int graceMonths;
-
-    private String guarantorName;
-    private String notes;
-
-    public Account() { }
-
-    // generate getters and setters (Source > Generate Getters and Setters > Select All)
+    // generate getters and setters here
 }
