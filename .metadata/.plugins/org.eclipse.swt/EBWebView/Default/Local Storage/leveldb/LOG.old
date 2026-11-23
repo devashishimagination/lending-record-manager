@@ -1,2 +1,3 @@
-2026/11/22-17:43:14.911 3758 Creating DB C:\Users\devas\git\repository2\lending\.metadata\.plugins\org.eclipse.swt\EBWebView\Default\Local Storage\leveldb since it was missing.
-2026/11/22-17:43:14.933 3758 Reusing MANIFEST C:\Users\devas\git\repository2\lending\.metadata\.plugins\org.eclipse.swt\EBWebView\Default\Local Storage\leveldb/MANIFEST-000001
+2026/11/22-17:43:25.375 1bc0 Reusing MANIFEST C:\Users\devas\git\repository2\lending\.metadata\.plugins\org.eclipse.swt\EBWebView\Default\Local Storage\leveldb/MANIFEST-000001
+2026/11/22-17:43:25.376 1bc0 Recovering log #3
+2026/11/22-17:43:25.380 1bc0 Reusing old log C:\Users\devas\git\repository2\lending\.metadata\.plugins\org.eclipse.swt\EBWebView\Default\Local Storage\leveldb/000003.log 

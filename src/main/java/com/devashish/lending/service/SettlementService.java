@@ -1,13 +1,21 @@
 package com.devashish.lending.service;
 
-import com.devashish.lending.model.*;
-import com.devashish.lending.repository.AccountRepository;
-import com.devashish.lending.repository.LedgerEntryRepository;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+
+import com.devashish.lending.model.Account;
+import com.devashish.lending.model.AccountStatus;
+import com.devashish.lending.model.EntryType;
+import com.devashish.lending.model.InterestMode;
+import com.devashish.lending.model.InterestPlan;
+import com.devashish.lending.model.LateMode;
+import com.devashish.lending.model.LedgerEntry;
+import com.devashish.lending.repository.AccountRepository;
+import com.devashish.lending.repository.LedgerEntryRepository;
 
 @Service
 public class SettlementService {
@@ -39,7 +47,7 @@ public class SettlementService {
 
         BigDecimal charge = BigDecimal.ZERO;
         if (!req.skipInterest()) {
-            if (req.ratePercent() != null) {                    // rate decided now
+            if (req.ratePercent() != null) {                 // rate decided now
                 account.setInterestEnabled(true);
                 account.setMonthlyRatePercent(req.ratePercent());
                 account.setInterestMode(req.interestMode());
@@ -51,7 +59,7 @@ public class SettlementService {
             charge = st.interest().add(st.lateCharge());
         }
 
-        if (charge.signum() > 0) {                              // book the agreed charge in the diary
+        if (charge.signum() > 0) {                           // write the agreed charge in the diary
             LedgerEntry e = new LedgerEntry();
             e.setAccount(account);
             e.setType(EntryType.ADDITION);
@@ -60,7 +68,8 @@ public class SettlementService {
             e.setNote("Interest and late charge agreed");
             entries.save(e);
         }
-        // the interest is now written in the diary, so stop calculating it again
+
+        // the charge is now in the diary, so stop calculating it again
         account.setInterestEnabled(false);
         account.setInterestPlan(InterestPlan.NONE);
         account.setLateRatePercent(null);
