@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lending Record Manager</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <h1>Lending Record Manager</h1>
+    <nav>
+      <a href="index.html" class="active">Dashboard</a>
+      <a href="people.html">People</a>
+    </nav>
+  </header>
+
+  <main>
+    <p id="error" class="error"></p>
+
+    <section class="cards">
+      <div class="card"><h2>Money given (to receive)</h2><p id="totalGiven">-</p></div>
+      <div class="card"><h2>Money taken (to pay)</h2><p id="totalTaken">-</p></div>
+      <div class="card"><h2>Money kept with me</h2><p id="totalKept">-</p></div>
+    </section>
+
+    <section>
+      <h2>Overdue (told date has passed)</h2>
+      <table>
+        <thead><tr><th>Person</th><th>Phone</th><th>Due date</th><th>Days late</th><th>Balance</th></tr></thead>
+        <tbody id="overdueBody"></tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>To call (no date told, over a month)</h2>
+      <table>
+        <thead><tr><th>Person</th><th>Phone</th><th>Given on</th><th>Days since</th><th>Balance</th></tr></thead>
+        <tbody id="toCallBody"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script src="js/dashboard.js"></script>
+</body>
+</html>
