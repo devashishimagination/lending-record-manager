@@ -29,13 +29,18 @@ public class InterestService {
     }
 
     public Statement statement(Long accountId, LocalDate asOf, BigDecimal rate, BigDecimal lateRate) {
+        return statement(accountId, asOf, rate, lateRate, null, null);
+    }
+
+    public Statement statement(Long accountId, LocalDate asOf, BigDecimal rate, BigDecimal lateRate,
+                               InterestMode interestMode, LateMode lateMode) {
         Account account = accounts.findById(accountId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
         List<LedgerEntry> list = entries.findByAccountIdOrderByEntryDateAsc(accountId);
 
         BigDecimal balance = balanceOn(account, list, asOf);
-        BigDecimal interest = interest(account, list, asOf, rate);
-        BigDecimal late = lateCharge(account, balance, asOf, lateRate);
+        BigDecimal interest = interest(account, list, asOf, rate, interestMode);
+        BigDecimal late = lateCharge(account, balance, asOf, lateRate, lateMode);
         return new Statement(accountId, asOf, balance, interest, late, balance.add(interest).add(late));
     }
 
@@ -51,16 +56,16 @@ public class InterestService {
         return balance;
     }
 
-    private BigDecimal interest(Account account, List<LedgerEntry> list,
-                                LocalDate asOf, BigDecimal rateOverride) {
+    private BigDecimal interest(Account account, List<LedgerEntry> list, LocalDate asOf,
+                                BigDecimal rateOverride, InterestMode modeOverride) {
         BigDecimal rate = rateOverride != null
                 ? rateOverride
                 : (account.isInterestEnabled() ? account.getMonthlyRatePercent() : null);
         if (rate == null) {
             return BigDecimal.ZERO;
         }
-        InterestMode mode = account.getInterestMode() != null
-                ? account.getInterestMode() : InterestMode.MONTHLY;
+        InterestMode mode = modeOverride != null ? modeOverride
+                : (account.getInterestMode() != null ? account.getInterestMode() : InterestMode.MONTHLY);
         LocalDate start = account.getStartDate();
         long periods = (mode == InterestMode.DAILY)
                 ? ChronoUnit.DAYS.between(start, asOf)
@@ -74,13 +79,14 @@ public class InterestService {
         return total.setScale(2, RoundingMode.HALF_UP);
     }
 
-    private BigDecimal lateCharge(Account account, BigDecimal balance,
-                                  LocalDate asOf, BigDecimal lateRateOverride) {
+    private BigDecimal lateCharge(Account account, BigDecimal balance, LocalDate asOf,
+                                  BigDecimal lateRateOverride, LateMode modeOverride) {
         BigDecimal lateRate = lateRateOverride != null ? lateRateOverride : account.getLateRatePercent();
         if (account.getDueDate() == null || lateRate == null) {
             return BigDecimal.ZERO;
         }
-        LateMode mode = account.getLateMode() != null ? account.getLateMode() : LateMode.MONTHLY;
+        LateMode mode = modeOverride != null ? modeOverride
+                : (account.getLateMode() != null ? account.getLateMode() : LateMode.MONTHLY);
         LocalDate lateStart = account.getDueDate().plusMonths(account.getGraceMonths());
         if (!asOf.isAfter(lateStart)) {
             return BigDecimal.ZERO;

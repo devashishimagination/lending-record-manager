@@ -30,6 +30,11 @@ public class LedgerEntryController {
         return repo.save(entry);
     }
 
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        repo.deleteById(id);
+    }
+
     @GetMapping("/balance")
     public BigDecimal balance(@RequestParam Long accountId) {
         return balanceService.balance(accountId);
