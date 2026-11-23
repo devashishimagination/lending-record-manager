@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0f2d52">
+  <title>Person - Lending Records</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header id="app-header"></header>
+
+  <main>
+    <p id="error" class="error"></p>
+
+    <section class="panel">
+      <div class="hero">
+        <div class="avatar" id="pAvatar"></div>
+        <div class="info">
+          <h1 id="pName"></h1>
+          <div class="sub"><a id="pPhone" href="#"></a></div>
+          <div class="sub" id="pNotes"></div>
+        </div>
+      </div>
+      <div class="chips" id="pChips"></div>
+      <div class="row-btns">
+        <button class="btn" id="newAccBtn">+ New account</button>
+        <button class="btn danger small" id="delPersonBtn">Delete person</button>
+      </div>
+    </section>
+
+    <div id="accounts"></div>
+  </main>
+
+  <dialog id="accDialog">
+    <h2>New account</h2>
+    <form id="accForm">
+      <label for="aType">What happened?</label>
+      <select id="aType">
+        <option value="GIVEN">I gave money</option>
+        <option value="TAKEN">I took money</option>
+        <option value="KEPT">Money kept with me</option>
+      </select>
+      <div class="grid2">
+        <div><label for="aPrincipal">Amount *</label>
+          <input id="aPrincipal" type="number" step="0.01" min="0.01" required></div>
+        <div><label for="aStart">Date *</label>
+          <input id="aStart" type="date" required></div>
+      </div>
+      <label for="aDue">Date told for return (optional)</label>
+      <input id="aDue" type="date">
+      <label for="aGuarantor">Guarantor (optional)</label>
+      <input id="aGuarantor" maxlength="100">
+      <label for="aNotes">Notes (optional)</label>
+      <input id="aNotes" maxlength="300">
+
+      <label for="aPlan">Interest</label>
+      <select id="aPlan">
+        <option value="DECIDE_LATER">Decide when money comes back</option>
+        <option value="FIXED">Fix it now</option>
+        <option value="NONE">No interest</option>
+      </select>
+      <div id="fixedBox" hidden>
+        <div class="grid2">
+          <div><label for="aRate">Interest % *</label>
+            <input id="aRate" type="number" step="0.01" min="0"></div>
+          <div><label for="aMode">Per</label>
+            <select id="aMode"><option value="MONTHLY">Month</option><option value="DAILY">Day</option></select></div>
+        </div>
+        <div class="grid2">
+          <div><label for="aGrace">Grace months</label>
+            <input id="aGrace" type="number" min="0" value="0"></div>
+          <div><label for="aLateRate">Late charge %</label>
+            <input id="aLateRate" type="number" step="0.01" min="0"></div>
+        </div>
+        <label for="aLateMode">Late charge per</label>
+        <select id="aLateMode"><option value="MONTHLY">Month</option><option value="DAILY">Day</option></select>
+      </div>
+
+      <div class="actions">
+        <button type="button" class="btn light" id="accCancel">Cancel</button>
+        <button type="submit" class="btn">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="entryDialog">
+    <h2>Add entry</h2>
+    <form id="entryForm">
+      <label for="eType">What happened?</label>
+      <select id="eType"></select>
+      <div class="grid2">
+        <div><label for="eAmount">Amount *</label>
+          <input id="eAmount" type="number" step="0.01" min="0.01" required></div>
+        <div><label for="eDate">Date *</label>
+          <input id="eDate" type="date" required></div>
+      </div>
+      <label for="eNote">Note</label>
+      <input id="eNote" maxlength="200">
+      <div class="actions">
+        <button type="button" class="btn light" id="entryCancel">Cancel</button>
+        <button type="submit" class="btn">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="settleDialog">
+    <h2>Money came back</h2>
+    <form id="settleForm">
+      <div class="grid2">
+        <div><label for="sDate">Date *</label>
+          <input id="sDate" type="date" required></div>
+        <div><label for="sPaid">Amount received</label>
+          <input id="sPaid" type="number" step="0.01" min="0"></div>
+      </div>
+      <label class="check"><input type="checkbox" id="sCalc"> Calculate interest now</label>
+      <div id="sInterestBox" hidden>
+        <div class="grid2">
+          <div><label for="sRate">Interest %</label>
+            <input id="sRate" type="number" step="0.01" min="0"></div>
+          <div><label for="sMode">Per</label>
+            <select id="sMode"><option value="MONTHLY">Month</option><option value="DAILY">Day</option></select></div>
+        </div>
+        <div class="grid2">
+          <div><label for="sLateRate">Late charge %</label>
+            <input id="sLateRate" type="number" step="0.01" min="0"></div>
+          <div><label for="sLateMode">Late per</label>
+            <select id="sLateMode"><option value="MONTHLY">Month</option><option value="DAILY">Day</option></select></div>
+        </div>
+      </div>
+      <button type="button" class="btn light small" id="previewBtn">Show total</button>
+      <div id="sPreview" class="preview" hidden></div>
+      <div class="actions">
+        <button type="button" class="btn light" id="settleCancel">Cancel</button>
+        <button type="submit" class="btn">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <nav id="app-bottom"></nav>
+  <script src="js/common.js"></script>
+  <script src="js/person.js"></script>
+</body>
+</html>

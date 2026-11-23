@@ -1,70 +1,57 @@
-// Format a number as Indian rupees
-const money = n => new Intl.NumberFormat('en-IN', {
-  style: 'currency', currency: 'INR', maximumFractionDigits: 2
-}).format(n);
-
-// Whole days between a date text (yyyy-mm-dd) and today
-const daysSince = dateText =>
-  Math.floor((Date.now() - new Date(dateText).getTime()) / 86400000);
+renderShell('index.html');
 
 async function loadDashboard() {
-  const errorBox = document.getElementById('error');
   try {
-    const res = await fetch('/api/dashboard');
-    if (!res.ok) {
-      throw new Error('Server returned ' + res.status);
-    }
-    const d = await res.json();
-
+    const d = await api('/api/dashboard');
     document.getElementById('totalGiven').textContent = money(d.totalGiven);
     document.getElementById('totalTaken').textContent = money(d.totalTaken);
     document.getElementById('totalKept').textContent = money(d.totalKept);
+    document.getElementById('overdueCount').textContent = d.overdue.length;
+    document.getElementById('toCallCount').textContent = d.toCall.length;
 
-    fillTable('overdueBody', d.overdue, 'dueDate', 'Nobody is overdue.');
-    fillTable('toCallBody', d.toCall, 'startDate', 'No one to call.');
+    fillList('overdueList', d.overdue,
+      r => 'Due ' + formatDate(r.dueDate) + ' | ' + daysBetween(r.dueDate) + ' days late',
+      'Nobody is overdue.');
+    fillList('toCallList', d.toCall,
+      r => 'Given ' + formatDate(r.startDate) + ' | ' + daysBetween(r.startDate) + ' days ago',
+      'No one to call.');
   } catch (err) {
-    errorBox.textContent = 'Could not load the dashboard: ' + err.message;
+    document.getElementById('error').textContent = 'Could not load the dashboard: ' + err.message;
   }
 }
 
-function fillTable(bodyId, rows, dateField, emptyText) {
-  const body = document.getElementById(bodyId);
-  body.innerHTML = '';
+function fillList(id, rows, subtitle, emptyText) {
+  const list = document.getElementById(id);
+  list.replaceChildren();
 
   if (rows.length === 0) {
-    const tr = document.createElement('tr');
-    const td = document.createElement('td');
-    td.colSpan = 5;
-    td.className = 'empty';
-    td.textContent = emptyText;
-    tr.appendChild(td);
-    body.appendChild(tr);
+    const p = document.createElement('p');
+    p.className = 'empty';
+    p.textContent = emptyText;
+    list.appendChild(p);
     return;
   }
 
   rows.forEach(r => {
-    const tr = document.createElement('tr');
+    const item = div('item');
+    item.addEventListener('click', () => { location.href = 'person.html?id=' + r.personId; });
 
-    const nameCell = document.createElement('td');
-    const link = document.createElement('a');
-    link.href = 'person.html?id=' + r.personId;      // person page comes in the next step
-    link.textContent = r.personName;
-    nameCell.appendChild(link);
+    const info = div('info');
+    info.append(div('name', r.personName), div('sub', subtitle(r)));
 
-    const values = [
-      r.phone || '-',
-      r[dateField],
-      daysSince(r[dateField]),
-      money(r.balance)
-    ];
+    const side = div('side');
+    side.append(div('amount', money(r.balance)));
+    if (r.phone) {
+      const call = document.createElement('a');
+      call.className = 'call';
+      call.href = 'tel:' + r.phone.replace(/[^0-9+]/g, '');
+      call.textContent = 'Call';
+      call.addEventListener('click', e => e.stopPropagation());
+      side.append(call);
+    }
 
-    tr.appendChild(nameCell);
-    values.forEach(v => {
-      const td = document.createElement('td');
-      td.textContent = v;
-      tr.appendChild(td);
-    });
-    body.appendChild(tr);
+    item.append(div('avatar', initials(r.personName)), info, side);
+    list.appendChild(item);
   });
 }
 
