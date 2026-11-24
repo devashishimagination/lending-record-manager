@@ -24,6 +24,10 @@ function div(cls, text) {
 // One place to call the API and handle errors
 async function api(path, options = {}) {
   const res = await fetch(path, { headers: { 'Content-Type': 'application/json' }, ...options });
+  if (res.status === 401) {
+    location.href = 'login.html';
+    throw new Error('Please sign in again');
+  }
   if (!res.ok) {
     let message = 'Server returned ' + res.status;
     try {
@@ -58,11 +62,11 @@ function renderShell(active) {
   document.getElementById('app-header').innerHTML =
     '<div class="brand">&#128176; Lending Records</div><nav class="top-nav">' +
     links.map(l => '<a href="' + l.href + '" class="' + (l.href === active ? 'active' : '') + '">' + l.label + '</a>').join('') +
-    '</nav>';
+    '<a href="/logout" class="logout">Log out</a></nav>';
   document.getElementById('app-bottom').innerHTML =
-    links.map(l => '<a href="' + l.href + '" class="' + (l.href === active ? 'active' : '') + '"><span>' + l.icon + '</span>' + l.label + '</a>').join('');
+    links.map(l => '<a href="' + l.href + '" class="' + (l.href === active ? 'active' : '') + '"><span>' + l.icon + '</span>' + l.label + '</a>').join('') +
+    '<a href="/logout"><span>&#128274;</span>Log out</a>';
 }
-
 // Today's date as yyyy-mm-dd in the device's own time zone
 function todayText() {
   const d = new Date();

@@ -122,3 +122,14 @@ select { width: 100%; padding: 11px 12px; margin: 6px 0 12px; border: 1px solid 
 .preview .tot { font-weight: 700; border-top: 1px solid var(--line); margin-top: 4px; padding-top: 6px; }
 dialog { max-height: 92vh; overflow-y: auto; }
 [hidden] { display: none !important; }
+
+
+
+.login-body { min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  padding: 20px; background: linear-gradient(135deg, var(--navy), var(--navy2)); }
+.login-box { background: var(--card); border-radius: var(--radius); box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+  padding: 28px 24px; width: min(380px, 100%); text-align: center; }
+.login-box form { text-align: left; }
+.login-logo { font-size: 44px; }
+.login-box h1 { margin: 6px 0 18px; font-size: 22px; }
+.logout { color: #cfe0f5; margin-left: 18px; font-size: 14px; }
