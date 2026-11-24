@@ -19,12 +19,13 @@ import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 public class SecurityConfig {
 
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain filterChain(HttpSecurity http,
+                                    @Value("${app.remember.key}") String rememberKey) throws Exception {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-            		.requestMatchers("/login.html", "/offline.html", "/css/**", "/js/**",
-                            "/manifest.webmanifest", "/icons/**", "/sw.js").permitAll()
+                .requestMatchers("/login.html", "/offline.html", "/css/**", "/js/**",
+                                 "/manifest.webmanifest", "/icons/**", "/sw.js", "/health").permitAll()
                 .anyRequest().authenticated())
             .formLogin(form -> form
                 .loginPage("/login.html")
@@ -32,10 +33,13 @@ public class SecurityConfig {
                 .defaultSuccessUrl("/index.html", true)
                 .failureUrl("/login.html?error")
                 .permitAll())
+            .rememberMe(rm -> rm
+                .key(rememberKey)
+                .alwaysRemember(true)
+                .tokenValiditySeconds(60 * 60 * 24 * 30))
             .logout(logout -> logout
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/login.html"))
-            // API calls from the pages get a clean 401, not a redirect to HTML
             .exceptionHandling(ex -> ex.defaultAuthenticationEntryPointFor(
                 new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
                 request -> request.getRequestURI().startsWith("/api/")));
@@ -48,8 +52,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    UserDetailsService users(PasswordEncoder encoder, @Value("${app.login.password}") String password) {
+    UserDetailsService users(@Value("${app.login.password-hash}") String hash) {
         return new InMemoryUserDetailsManager(
-            User.withUsername("owner").password(encoder.encode(password)).roles("OWNER").build());
+            User.withUsername("owner").password(hash).roles("OWNER").build());
     }
 }

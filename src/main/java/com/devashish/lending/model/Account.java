@@ -23,6 +23,7 @@ public class Account {
 
     @NotNull
     @Positive
+    @Column(precision = 19, scale = 2)
     private BigDecimal principal;
 
     @NotNull
@@ -31,6 +32,8 @@ public class Account {
     private LocalDate dueDate;                    // optional
 
     private boolean interestEnabled;
+
+    @Column(precision = 10, scale = 4)
     private BigDecimal monthlyRatePercent;        // percent per period (month or day)
 
     @Enumerated(EnumType.STRING)
@@ -41,6 +44,7 @@ public class Account {
     @Enumerated(EnumType.STRING)
     private LateMode lateMode;
 
+    @Column(precision = 10, scale = 4)
     private BigDecimal lateRatePercent;
 
     @Enumerated(EnumType.STRING)
@@ -181,6 +185,4 @@ public class Account {
 	public void setNotes(String notes) {
 		this.notes = notes;
 	}
-
-    // generate getters and setters here
 }

@@ -1,0 +1,6 @@
+target
+.git
+.settings
+.project
+.classpath
+src/main/resources/application-local.properties
