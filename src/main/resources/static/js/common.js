@@ -60,7 +60,7 @@ function renderShell(active) {
     { href: 'people.html', label: 'People', icon: '&#128101;' }
   ];
   document.getElementById('app-header').innerHTML =
-    '<div class="brand">&#128176; Lending Records</div><nav class="top-nav">' +
+    '<div class="brand">&#128213; Bahi Khata</div><nav class="top-nav">' +
     links.map(l => '<a href="' + l.href + '" class="' + (l.href === active ? 'active' : '') + '">' + l.label + '</a>').join('') +
     '<a href="/logout" class="logout">Log out</a></nav>';
   document.getElementById('app-bottom').innerHTML =
@@ -72,4 +72,11 @@ function todayText() {
   const d = new Date();
   return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' +
          String(d.getDate()).padStart(2, '0');
+}
+
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => { /* app still works without it */ });
+  });
 }
